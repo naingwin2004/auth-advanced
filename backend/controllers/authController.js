@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 
-
 import User from "../models/userSchema.js";
 import {
 	generateAccessToken,
@@ -34,7 +33,7 @@ export const register = async (req, res) => {
 			email,
 			password: hashedPassword,
 			verificationToken: hashedOtp,
-			verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, //24h
+			verificationTokenExpiresAt: Date.now() + 15 * 60 * 1000, //15min
 		});
 		await user.save();
 
@@ -111,9 +110,14 @@ export const verifyEmail = async (req, res) => {
 
 		const isValidToken = await bcrypt.compare(code, user.verificationToken);
 
-		if (!isValidToken || user.verificationTokenExpiresAt < Date.now()) {
+		if (!isValidToken) {
 			return res.status(400).json({
-				message: "Invalid or Expired verification code",
+				message: "Invalid code",
+			});
+		}
+		if (user.verificationTokenExpiresAt < Date.now()) {
+			return res.status(400).json({
+				message: "Expired verification code, Try resend code",
 			});
 		}
 
@@ -179,7 +183,54 @@ export const refresh = async (req, res) => {
 	}
 };
 
+export const resendVerificationToken = async (req, res) => {
+	const { email } = req.body;
+
+	try {
+		if (!email) {
+			return res.status(400).json({
+				message: "All fields are required",
+			});
+		}
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(404).json({
+				message: "User doesn't exists",
+			});
+		}
+		if (user.isVerified) {
+			return res.status(400).json({
+				message: "somthing wrong ?",
+			});
+		}
+		if (user.verificationTokenExpiresAt > Date.now()) {
+			return res.status(400).json({
+				message:
+					"Verification code is not Expired, please check your email",
+			});
+		}
+
+		const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+		const hashedOtp = await bcrypt.hash(otp, 10);
+
+		user.verificationToken = hashedOtp;
+		user.verificationTokenExpiresAt = Date.now() + 15 * 60 * 1000; //15min
+		await user.save();
+
+		await sendVerificationEmail(res, user.email, otp);
+
+		return res.status(201).json({
+			message: "resend code compleate, check your email",
+			verificationTokenExpiresAt: user.verificationTokenExpiresAt,
+		});
+	} catch (err) {
+		console.log("Error in resendVerificationToken :", err.message);
+		return res.status(500).json({ message: "Internal Server Error" });
+	}
+};
+
 export const logout = async (req, res) => {
-	res.clearCookie("token");
+	res.clearCookie("refreshToken");
 	res.status(200).json({ success: true, message: "Logout Successfully" });
 };
