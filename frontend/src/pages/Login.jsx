@@ -61,7 +61,7 @@ const Login = () => {
 	};
 
 	return (
-		<div className='flex items-center justify-center min-h-screen mx-3'>
+		<div className='flex items-center justify-center mx-3 my-auto'>
 			<Card className='w-[400px]'>
 				<CardHeader>
 					<CardTitle>Login</CardTitle>
@@ -117,11 +117,13 @@ const Login = () => {
 					</Form>
 				</CardContent>
 				<CardFooter className='flex flex-col justify-center'>
+				<Link to={"/forgotPassword"}>
 					<Button
 						variant='link'
 						className='text-sm'>
 						Forgot password?
 					</Button>
+					</Link>
 					<p className='text-sm text-muted-foreground'>
 						Don't have an account?{" "}
 						<Link to={"/register"}>

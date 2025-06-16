@@ -1,29 +1,28 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-export const generateAccessToken = async (user) => {
-	const token = await jwt.sign(
-		{ userId: user._id },
-		process.env.ACCESS_SECRET,
-		{
-			expiresIn: "15min",
-		},
-	);
+dotenv.config();
+
+export const generateAccessToken = async (userId) => {
+	const token = await jwt.sign({ userId }, process.env.ACCESS_SECRET, {
+		expiresIn: "15min",
+	});
 	return token;
 };
 
-export const generateRefreshTokenAndSetCookie = async (res, user) => {
+export const generateRefreshTokenAndSetCookie = async (res, userId) => {
 	const token = await jwt.sign(
-		{ userId: user._id },
+		{ userId },
 		process.env.REFRESH_SECRET,
 		{
 			expiresIn: "30d",
 		},
 	);
-	res.cookie("refershToken", token, {
+	res.cookie("refreshToken", token, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "none",
-		maxAge: 30 * 24 * 60 * 60 * 1000, // 30d
+		sameSite: "strict",
+		maxAge: 7 * 24 * 60 * 60 * 1000,
 	});
 	return token;
 };

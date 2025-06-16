@@ -102,7 +102,7 @@ const OTPVerification = () => {
 	};
 
 	return (
-		<div className='flex items-center justify-center min-h-screen mx-3'>
+		<div className='flex items-center justify-center my-auto mx-3'>
 			<Card className='w-[400px]'>
 				<CardHeader>
 					<CardTitle>Verify Your Email</CardTitle>
@@ -134,6 +134,7 @@ const OTPVerification = () => {
 															<InputOTPSlot
 																key={index}
 																index={index}
+																className='border-border'
 															/>
 														),
 													)}

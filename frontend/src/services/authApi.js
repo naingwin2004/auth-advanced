@@ -1,18 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import { baseQueryWithReauth } from "./baseQuerWithReauth.js";
 
 export const authApi = createApi({
 	reducerPath: "authApi",
-	baseQuery: fetchBaseQuery({
-		baseUrl: `${import.meta.env.VITE_SERVER_URL}`,
-		credentials: "include",
-		prepareHeaders: (headers, { getState }) => {
-			const token = getState().auth.token;
-			if (token) {
-				headers.set("Authorization", `Bearer ${token}`);
-			}
-			return headers;
-		},
-	}),
+	baseQuery: baseQueryWithReauth,
 	endpoints: (builder) => ({
 		login: builder.mutation({
 			query: (data) => ({
@@ -21,6 +13,7 @@ export const authApi = createApi({
 				body: data,
 			}),
 		}),
+
 		register: builder.mutation({
 			query: (data) => ({
 				url: "/register",
@@ -28,6 +21,7 @@ export const authApi = createApi({
 				body: data,
 			}),
 		}),
+
 		verifyEmail: builder.mutation({
 			query: (data) => ({
 				url: "/verifyEmail",
@@ -35,6 +29,7 @@ export const authApi = createApi({
 				body: data,
 			}),
 		}),
+
 		resendVerificationToken: builder.mutation({
 			query: (email) => ({
 				url: "/resendVerificationToken",
@@ -42,23 +37,43 @@ export const authApi = createApi({
 				body: email,
 			}),
 		}),
-		checkAuth: builder.query({
-			query: () => "/checkAuth",
+
+		forgotPassword: builder.mutation({
+			query: (email) => ({
+				url: "/forgotPassword",
+				method: "POST",
+				body: email,
+			}),
 		}),
+
+		resetPassword: builder.mutation({
+			query: ({token, data}) => ({
+				url: `/resetPassword/${token}`,
+				method: "POST",
+				body: data,
+			}),
+		}),
+
 		logout: builder.mutation({
 			query: () => ({
 				url: "/logout",
 				method: "POST",
 			}),
 		}),
+
+		checkAuth: builder.query({
+			query: () => "/checkAuth",
+		}),
 	}),
 });
 
 export const {
 	useLoginMutation,
+	useLogoutMutation,
 	useRegisterMutation,
 	useVerifyEmailMutation,
-	useLogoutMutation,
+	useForgotPasswordMutation,
+	useResetPasswordMutation,
 	useResendVerificationTokenMutation,
 	useCheckAuthQuery,
 } = authApi;
