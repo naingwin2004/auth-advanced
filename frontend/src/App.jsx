@@ -4,17 +4,17 @@ import {
 	Navigate,
 } from "react-router-dom";
 
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import OTPVerification from "./pages/OTPVerification.jsx";
-import ForgotPassword from "./pages/ForgotPassword.jsx";
-import ResetPassword from "./pages/ResetPassword.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Register from "./pages/auth/Register.jsx";
+import OTPVerification from "./pages/auth/OTPVerification.jsx";
+import ForgotPassword from "./pages/auth/ForgotPassword.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 import Main from "./layout/Main.jsx";
 import Home from "./layout/Home.jsx";
 
 import {
-	ProtectedRoute,
 	ProtectedUnverifiedOnly,
 	RedirectAuthenticatedUser,
 } from "./components/ProtectedRoute.jsx";
@@ -26,6 +26,7 @@ const App = () => {
 		{
 			path: "/",
 			element: <Main />,
+			errorElement: <NotFoundPage />,
 			children: [
 				{
 					index: true,
@@ -54,17 +55,17 @@ const App = () => {
 				{
 					path: "/forgotPassword",
 					element: (
-						<>
+						<RedirectAuthenticatedUser>
 							<ForgotPassword />
-						</>
+						</RedirectAuthenticatedUser>
 					),
 				},
 				{
 					path: "/resetPassword/:token",
 					element: (
-						<>
+						<RedirectAuthenticatedUser>
 							<ResetPassword />
-						</>
+						</RedirectAuthenticatedUser>
 					),
 				},
 				{

@@ -7,7 +7,7 @@ import { LoaderCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 import {
 	Form,
 	FormControl,
@@ -15,12 +15,12 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "../components/ui/form";
+} from "../../components/ui/form";
 import {
 	InputOTP,
 	InputOTPGroup,
 	InputOTPSlot,
-} from "../components/ui/input-otp";
+} from "../../components/ui/input-otp";
 import {
 	Card,
 	CardContent,
@@ -28,14 +28,14 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 
 import {
 	useVerifyEmailMutation,
 	useResendVerificationTokenMutation,
-} from "../services/authApi.js";
-import { setCredentials, updateUser } from "../app/features/auth/auth.js";
-import { formatDate } from "../lib/formatDate.js";
+} from "../../services/authApi.js";
+import { setCredentials, updateUser } from "../../app/features/auth/auth.js";
+import { formatDate } from "../../lib/formatDate.js";
 
 const otpFormSchema = z.object({
 	code: z

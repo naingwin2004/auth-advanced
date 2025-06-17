@@ -5,7 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "../components/ui/button.jsx";
+import { Button } from "../../components/ui/button.jsx";
 import {
 	Form,
 	FormControl,
@@ -13,8 +13,8 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "../components/ui/form";
-import { Input } from "../components/ui/input";
+} from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
 import {
 	Card,
 	CardContent,
@@ -22,10 +22,10 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 
-import { useLoginMutation } from "../services/authApi.js";
-import { setCredentials } from "../app/features/auth/auth.js";
+import { useLoginMutation } from "../../services/authApi.js";
+import { setCredentials } from "../../app/features/auth/auth.js";
 import { useDispatch } from "react-redux";
 
 const loginFormSchema = z.object({

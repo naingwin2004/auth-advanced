@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useParams, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "../components/ui/button.jsx";
+import { Button } from "../../components/ui/button.jsx";
 import {
 	Form,
 	FormControl,
@@ -12,8 +12,8 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "../components/ui/form";
-import { Input } from "../components/ui/input";
+} from "../../components/ui/form";
+import { Input } from "../../components/ui/input";
 import {
 	Card,
 	CardContent,
@@ -21,9 +21,9 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "../components/ui/card";
+} from "../../components/ui/card";
 
-import { useResetPasswordMutation } from "../services/authApi.js";
+import { useResetPasswordMutation } from "../../services/authApi.js";
 
 const confirmPasswordFormSchema = z
 	.object({
@@ -56,7 +56,7 @@ const ConfirmPassword = () => {
 		try {
 			const res = await resetPassword({ token, data }).unwrap();
 			toast.success(res?.message);
-			navigate("/login")
+			navigate("/login");
 		} catch (err) {
 			console.log("err in ResetPassword page : ", err);
 			toast.error(err?.data?.message || "fail resetPassword");

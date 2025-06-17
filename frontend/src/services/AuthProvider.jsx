@@ -1,16 +1,33 @@
+import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import { useCheckAuthQuery, useLogoutMutation } from "../services/authApi.js";
 import { updateUser, logout } from "../app/features/auth/auth.js";
-import { useEffect } from "react";
 
 const AuthProvider = ({ children }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const token = useSelector((state) => state.auth.token);
 
-	const { data, error, isError, isLoading, isSuccess } = useCheckAuthQuery();
+	const { data, error, isError, isLoading, isSuccess } = useCheckAuthQuery(
+  token ? undefined : skipToken
+);
 	const [logoutApi] = useLogoutMutation();
+
+	const handleLogout = async () => {
+		console.log("logout in AuthProvider");
+		try {
+			await logoutApi().unwrap();
+			localStorage.removeItem("token");
+			localStorage.removeItem("auth-user");
+			dispatch(logout());
+		} catch (err) {
+			console.error("Logout API failed:", err);
+		}
+	};
 
 	useEffect(() => {
 		if (isSuccess && data?.user) {
@@ -20,15 +37,17 @@ const AuthProvider = ({ children }) => {
 	}, [isSuccess, data, dispatch]);
 
 	useEffect(() => {
-		if (isError && error?.data) {
-			console.log("logout in AuthProvider");
-			logoutApi(); // API logout
-			localStorage.removeItem("token");
-			localStorage.removeItem("auth-user");
-			dispatch(logout());
+		if (isError && error?.status === 401) {
+			handleLogout();
 			navigate("/login");
 		}
-	}, [error, dispatch, navigate, logoutApi]);
+	}, [isError, error, logoutApi]);
+
+	useEffect(() => {
+		if (!token) {
+			navigate("/login");
+		}
+	}, [token, navigate]);
 
 	if (isLoading) {
 		return (
